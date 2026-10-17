@@ -9,7 +9,7 @@ import (
 )
 
 func record() Record {
-	return Record{Version: Version, Group: string(bytes.Repeat([]byte("a"), 64)), DeviceID: ID(), Hostname: "laptop", PublicKey: RandomNonce(), Sequence: 1, IssuedAt: 1000, ExpiresAt: 1060, Port: 8080, Publish: true, Services: []Service{{Kind: Application, ID: ID(), Domain: "demo.localhost"}}}
+	return Record{Version: 1, Group: string(bytes.Repeat([]byte("a"), 64)), DeviceID: ID(), Hostname: "laptop", PublicKey: RandomNonce(), Sequence: 1, IssuedAt: 1000, ExpiresAt: 1060, Port: 8080, Publish: true, Services: []Service{{Kind: Application, ID: ID(), Domain: "demo.localhost"}}}
 }
 func TestCatalogForgeryAndExpiry(t *testing.T) {
 	r := record()
@@ -32,6 +32,9 @@ func TestCatalogForgeryAndExpiry(t *testing.T) {
 	}
 }
 func TestTraceLoopsAndBounds(t *testing.T) {
+	if TraceHeader != "X-Zelport-Relay-Trace" {
+		t.Fatalf("trace header = %q", TraceHeader)
+	}
 	key := bytes.Repeat([]byte{2}, 32)
 	now := time.Unix(1000, 0)
 	device, service := ID(), ID()
@@ -39,8 +42,8 @@ func TestTraceLoopsAndBounds(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if _, e = AdvanceTrace(trace, key, device, service, now); e == nil {
-		t.Fatal("loop allowed")
+	if _, e = AdvanceTrace(trace, key, device, service, now); e == nil || e.Error() != "relay loop detected" {
+		t.Fatalf("loop error = %v", e)
 	}
 	for range 7 {
 		trace, e = AdvanceTrace(trace, key, ID(), ID(), now)
@@ -48,8 +51,8 @@ func TestTraceLoopsAndBounds(t *testing.T) {
 			t.Fatal(e)
 		}
 	}
-	if _, e = AdvanceTrace(trace, key, ID(), ID(), now); e == nil {
-		t.Fatal("ninth allowed")
+	if _, e = AdvanceTrace(trace, key, ID(), ID(), now); e == nil || e.Error() != "relay hop limit exceeded" {
+		t.Fatalf("hop-limit error = %v", e)
 	}
 	if _, e = AdvanceTrace(trace, key, ID(), ID(), now.Add(3*time.Minute)); e == nil {
 		t.Fatal("expired accepted")

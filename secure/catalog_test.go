@@ -12,7 +12,7 @@ import (
 func catalogFixture() (protocol.Record, []byte) {
 	secret := bytes.Repeat([]byte{7}, 32)
 	group, _ := Derive(secret, "group-locator")
-	return protocol.Record{Version: 3, Group: hex.EncodeToString(group[:]), DeviceID: "11111111-1111-4111-8111-111111111111", Hostname: "private-host", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: 1000, ExpiresAt: 1060, Port: 8080, Publish: true, Services: []protocol.Service{{ID: "22222222-2222-4222-8222-222222222222", Domain: "private.localhost", Kind: protocol.Application}}}, secret
+	return protocol.Record{Version: 1, Group: hex.EncodeToString(group[:]), DeviceID: "11111111-1111-4111-8111-111111111111", Hostname: "private-host", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: 1000, ExpiresAt: 1060, Port: 8080, Publish: true, Services: []protocol.Service{{ID: "22222222-2222-4222-8222-222222222222", Domain: "private.localhost", Kind: protocol.Application}}}, secret
 }
 func TestCatalogEnvelopeRoundTrip(t *testing.T) {
 	r, s := catalogFixture()
@@ -97,7 +97,7 @@ func TestCatalogRoutingBinding(t *testing.T) {
 	}
 	r.DeviceID = protocol.ID()
 	b, _ := CatalogRouteID(s, r.DeviceID)
-	if a != "e55ce22db09478af9b101f584abf4a5a766f4712ccb825cbf854d2892bf3e5e0" {
+	if a != "022800b2d51ebf605c906ba340c82816b3a5c8df6dbb4bb289d49dfebf52dbc1" {
 		t.Fatal("routing derivation vector changed", a)
 	}
 	if a == b || len(a) != 64 {

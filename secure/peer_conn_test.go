@@ -26,7 +26,7 @@ func peerPairContext(t *testing.T, ctx context.Context, options peerOptions, a, 
 	i, ik := identity(t)
 	p, pk := identity(t)
 	secret := bytes.Repeat([]byte{9}, 32)
-	peer := protocol.PeerContext{Version: 3, Group: string(bytes.Repeat([]byte("a"), 64)), Consumer: i.ID, Provider: p.ID, ConsumerKey: ik, ProviderKey: pk, Session: protocol.RandomNonce()}
+	peer := protocol.PeerContext{Version: 1, Group: string(bytes.Repeat([]byte("a"), 64)), Consumer: i.ID, Provider: p.ID, ConsumerKey: ik, ProviderKey: pk, Session: protocol.RandomNonce()}
 	route := testPeerRoute(t, secret, peer)
 	type result struct {
 		c net.Conn

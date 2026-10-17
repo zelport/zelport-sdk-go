@@ -19,7 +19,7 @@ func benchmarkPair(b *testing.B) (*peerConn, *peerConn) {
 	priv2, _ := ecdh.X25519().GenerateKey(rand.Reader)
 	i := protocol.Identity{ID: protocol.ID(), PrivateKey: priv1.Bytes()}
 	p := protocol.Identity{ID: protocol.ID(), PrivateKey: priv2.Bytes()}
-	peer := protocol.PeerContext{Version: 3, Group: string(bytes.Repeat([]byte("a"), 64)), Consumer: i.ID, Provider: p.ID, ConsumerKey: base64.RawURLEncoding.EncodeToString(priv1.PublicKey().Bytes()), ProviderKey: base64.RawURLEncoding.EncodeToString(priv2.PublicKey().Bytes()), Session: protocol.RandomNonce()}
+	peer := protocol.PeerContext{Version: 1, Group: string(bytes.Repeat([]byte("a"), 64)), Consumer: i.ID, Provider: p.ID, ConsumerKey: base64.RawURLEncoding.EncodeToString(priv1.PublicKey().Bytes()), ProviderKey: base64.RawURLEncoding.EncodeToString(priv2.PublicKey().Bytes()), Session: protocol.RandomNonce()}
 	secret := bytes.Repeat([]byte{9}, 32)
 	route, _ := PeerRoute(secret, peer)
 	a, z := net.Pipe()

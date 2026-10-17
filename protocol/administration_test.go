@@ -7,7 +7,7 @@ import (
 )
 
 func TestAdministrationCatalogAndOpen(t *testing.T) {
-	r := Record{Version: Version, Group: string(bytes.Repeat([]byte("a"), 64)), DeviceID: ID(), Hostname: "desktop.example.test", PublicKey: RandomNonce(), Sequence: 1, IssuedAt: time.Now().Unix(), Port: 8080}
+	r := Record{Version: 1, Group: string(bytes.Repeat([]byte("a"), 64)), DeviceID: ID(), Hostname: "desktop.example.test", PublicKey: RandomNonce(), Sequence: 1, IssuedAt: time.Now().Unix(), Port: 8080}
 	r.ExpiresAt = r.IssuedAt + 60
 	admin := Service{ID: ID(), Domain: r.DeviceID + ".zelport.localhost", Kind: Administration}
 	r.Services = []Service{admin}
@@ -31,9 +31,11 @@ func TestAdministrationCatalogAndOpen(t *testing.T) {
 		t.Fatal("duplicate admin accepted")
 	}
 	r.Services = []Service{admin}
-	r.Version = 1
-	if _, e = CanonicalRecord(r); e == nil {
-		t.Fatal("v1 accepted")
+	for _, version := range []int{0, 2, 3} {
+		r.Version = version
+		if _, e = CanonicalRecord(r); e == nil {
+			t.Fatalf("version %d accepted", version)
+		}
 	}
 	for _, authority := range []string{"evil.test:8080", "foo.zelport.localhost.evil:8080", "user@foo.zelport.localhost:8080", "foo.zelport.localhost:0"} {
 		if (OpenRequest{Kind: Administration, ServiceID: admin.ID, Authority: admin.Domain + ":8080", Admin: &AdminOpen{Authority: authority}}).Validate() == nil {

@@ -57,7 +57,7 @@ func TestCatalogPersistenceFailurePreservesTrust(t *testing.T) {
 		t.Fatal(e)
 	}
 	defer c.Close()
-	r := protocol.Record{Version: 3, Group: c.group, DeviceID: protocol.ID(), Hostname: "original", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: time.Now().Unix(), ExpiresAt: time.Now().Unix() + 60, Port: 8080}
+	r := protocol.Record{Version: 1, Group: c.group, DeviceID: protocol.ID(), Hostname: "original", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: time.Now().Unix(), ExpiresAt: time.Now().Unix() + 60, Port: 8080}
 	a, e := secure.SealCatalog(r, secret)
 	if e != nil {
 		t.Fatal(e)
@@ -98,7 +98,7 @@ func TestCatalogConcurrentAcceptance(t *testing.T) {
 		t.Fatal(e)
 	}
 	defer c.Close()
-	r := protocol.Record{Version: 3, Group: c.group, DeviceID: protocol.ID(), Hostname: "host", PublicKey: protocol.RandomNonce(), Sequence: 2, IssuedAt: time.Now().Unix(), ExpiresAt: time.Now().Unix() + 60, Port: 8080}
+	r := protocol.Record{Version: 1, Group: c.group, DeviceID: protocol.ID(), Hostname: "host", PublicKey: protocol.RandomNonce(), Sequence: 2, IssuedAt: time.Now().Unix(), ExpiresAt: time.Now().Unix() + 60, Port: 8080}
 	low, _ := secure.SealCatalog(r, secret)
 	r.Sequence = 3
 	high, _ := secure.SealCatalog(r, secret)

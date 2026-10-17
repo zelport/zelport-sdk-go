@@ -8,12 +8,12 @@ import (
 )
 
 func TestCatalogEnvelopeStrictness(t *testing.T) {
-	e := CatalogEnvelope{Version: 3, Group: string(bytes.Repeat([]byte("a"), 64)), RouteID: string(bytes.Repeat([]byte("b"), 64)), Nonce: make([]byte, 24), Ciphertext: make([]byte, 16)}
+	e := CatalogEnvelope{Version: 1, Group: string(bytes.Repeat([]byte("a"), 64)), RouteID: string(bytes.Repeat([]byte("b"), 64)), Nonce: make([]byte, 24), Ciphertext: make([]byte, 16)}
 	b, err := EncodeCatalogEnvelope(e)
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, bad := range [][]byte{append([]byte(" "), b...), bytes.Replace(b, []byte("[3,"), []byte("[2,"), 1), bytes.Replace(b, []byte("[3,"), []byte("[3,0,"), 1), bytes.Replace(b, []byte(`"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"`), []byte(`"AA=="`), 1)} {
+	for _, bad := range [][]byte{append([]byte(" "), b...), bytes.Replace(b, []byte("[1,"), []byte("[2,"), 1), bytes.Replace(b, []byte("[1,"), []byte("[1,0,"), 1), bytes.Replace(b, []byte(`"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"`), []byte(`"AA=="`), 1)} {
 		if _, err := ParseCatalogEnvelope(bad); err == nil {
 			t.Fatal("malformed envelope accepted")
 		}
@@ -47,7 +47,7 @@ func TestCatalogCompleteMessageBounds(t *testing.T) {
 	if e := WriteJSON(&b, m); e == nil || b.Len() != 0 {
 		t.Fatal("oversized message partially sent", e)
 	}
-	env := CatalogEnvelope{Version: 3, Group: strings.Repeat("a", 64), RouteID: strings.Repeat("b", 64), Nonce: make([]byte, 24), Ciphertext: make([]byte, 98000)}
+	env := CatalogEnvelope{Version: 1, Group: strings.Repeat("a", 64), RouteID: strings.Repeat("b", 64), Nonce: make([]byte, 24), Ciphertext: make([]byte, 98000)}
 	raw, e := EncodeCatalogEnvelope(env)
 	if e != nil {
 		t.Fatal(e)

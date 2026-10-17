@@ -28,7 +28,7 @@ func TestCatalogHintsPreserveAuthenticationAndExpiry(t *testing.T) {
 	}
 	defer c.Close()
 	now := time.Now().Unix()
-	record := protocol.Record{Version: 3, Group: c.group, DeviceID: protocol.ID(), Hostname: "provider", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: now, ExpiresAt: now + 60, Port: 8080}
+	record := protocol.Record{Version: 1, Group: c.group, DeviceID: protocol.ID(), Hostname: "provider", PublicKey: protocol.RandomNonce(), Sequence: 1, IssuedAt: now, ExpiresAt: now + 60, Port: 8080}
 	raw, err := secure.SealCatalog(record, secret)
 	if err != nil {
 		t.Fatal(err)

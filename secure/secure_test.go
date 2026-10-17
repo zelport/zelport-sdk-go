@@ -238,7 +238,7 @@ func TestCiphertextTamperReplayAndSecretCapture(t *testing.T) {
 }
 
 func TestKDFVectors(t *testing.T) {
-	vectors := map[string]string{"group-locator": "52c38146235d817ff7d133ca1a6902ee5061f42f2408e6929d2b2e65c0f40a0b", "catalog-mac": "2debbf0fc8e969234b9b6302b60e0be7ab81e8f27394d47dc696563e0d5ed2b3", "peer-psk": "e1542f134a00c09ea71190cb7f2df1c94af62ba00137ba3f55f416e31a4186a8", "trace-mac": "7dbd06b2c1c018653dd475c947dfa69113b350fcd242505ea3d5bf2c21331454", "relay-admission": "69747a5b47038da640a9b7d4746766a8f620e8ef73787923314c3622ed4e99ae"}
+	vectors := map[string]string{"group-locator": "b8ab1144ae020acfd510ad9c4f96bba3ad5388ee8ab02cca37cead2021e10ad1", "catalog-mac": "bb4a62dc15a7931211340ac566f504e116aff2250dac37cb24d54d9ce6727779", "peer-psk": "8c083550386a43e2f02ed60fb1279252f9df781f5639a9bf7fecc3196344aa0b", "trace-mac": "c2fc0d56d16d8928cd02ceefc7739a3f87e10eaa7e81b4e2d8e1f2ca22e3648a", "relay-admission": "8d327374a9b7903d50b12f3f3cdc29f9bc3d2047114f421adedcaa2dd3e706d3"}
 	for purpose, want := range vectors {
 		key, e := Derive(bytes.Repeat([]byte{1}, 32), purpose)
 		if e != nil || hex.EncodeToString(key[:]) != want {
