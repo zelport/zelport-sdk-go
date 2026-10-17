@@ -1,12 +1,5 @@
 # Working on zelport-sdk-go
 
-## Temporary commit message override
-
-Until the user explicitly revokes this instruction, use exactly
-`chore: initialize preview` for every new commit, regardless of change type.
-This temporary instruction takes precedence over the general commit message
-rules below. Do not rewrite existing commits solely to apply this instruction.
-
 Read README.md before making changes. Write documentation, code comments,
 errors and UI text in English.
 
@@ -31,7 +24,7 @@ Examples:
 - `feat(homebrew): support user services`
 - `fix(relay): preserve client identities on reconnect`
 - `docs: clarify installation instructions`
-- `feat(config)!: require configuration version 6`
+- `feat(protocol)!: require relay wire version 1`
 
 Do not rewrite existing shared history merely to change commit message format.
 
