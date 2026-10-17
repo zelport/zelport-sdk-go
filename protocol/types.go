@@ -1,4 +1,4 @@
-// Package protocol defines the versioned, bounded Ports over Cloud wire format.
+// Package protocol defines the versioned, bounded Ports over Relay wire format.
 package protocol
 
 import (
@@ -9,12 +9,21 @@ import (
 	"regexp"
 )
 
-const Version = 3
+const (
+	Version                       = 1
+	RelayEndpoint                 = "/v1/ws"
+	TraceHeader                   = "X-Zelport-Relay-Trace"
+	CryptoContext                 = "zelport-relay/v1"
+	CatalogCryptoContext          = CryptoContext + "/catalog"
+	ClientRelayCryptoContext      = CryptoContext + "/client-relay/"
+	OpenClientRelayCryptoContext  = CryptoContext + "/client-relay/open/"
+	ConsumerProviderCryptoContext = CryptoContext + "/consumer-provider/"
+	RenewalCryptoContext          = CryptoContext + "/renewal/"
+)
 const MaxServices = 256
 const MaxKnownCatalog = 32
 const MaxControl = 128 << 10
 const MaxSnapshot = 2 << 20
-const TraceHeader = "X-Zelport-Cloud-Trace"
 
 var uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
 var domainPattern = regexp.MustCompile(`^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+localhost$`)

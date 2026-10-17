@@ -18,7 +18,7 @@ func catalogKey(secret []byte, purpose string) ([]byte, error) {
 	if len(secret) != 32 {
 		return nil, errors.New("invalid E2E secret")
 	}
-	return hkdf.Key(sha256.New, secret, []byte("snitzel-cloud/v3"), purpose, 32)
+	return hkdf.Key(sha256.New, secret, []byte(protocol.CryptoContext), purpose, 32)
 }
 func CatalogRouteID(secret []byte, deviceID string) (string, error) {
 	if !protocol.ValidID(deviceID) {
@@ -35,7 +35,7 @@ func CatalogRouteID(secret []byte, deviceID string) (string, error) {
 func catalogParameters(secret []byte, e protocol.CatalogEnvelope) ([]byte, []byte, error) {
 	info, _ := json.Marshal([]any{"catalog-encryption", e.Group, e.RouteID})
 	key, err := catalogKey(secret, string(info))
-	ad, _ := json.Marshal([]any{"snitzel-cloud/v3/catalog", 3, e.Group, e.RouteID})
+	ad, _ := json.Marshal([]any{protocol.CatalogCryptoContext, protocol.Version, e.Group, e.RouteID})
 	return key, ad, err
 }
 func SealCatalog(r protocol.Record, secret []byte) ([]byte, error) {
@@ -57,7 +57,7 @@ func sealCatalog(r protocol.Record, secret []byte, random io.Reader) ([]byte, er
 	if err != nil {
 		return nil, err
 	}
-	e := protocol.CatalogEnvelope{Version: 3, Group: r.Group, RouteID: route, Nonce: make([]byte, 24)}
+	e := protocol.CatalogEnvelope{Version: protocol.Version, Group: r.Group, RouteID: route, Nonce: make([]byte, 24)}
 	if _, err = io.ReadFull(random, e.Nonce); err != nil {
 		return nil, err
 	}

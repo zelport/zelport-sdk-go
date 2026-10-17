@@ -27,7 +27,7 @@ func Derive(secret []byte, purpose string) ([32]byte, error) {
 	default:
 		return key, errors.New("unknown key purpose")
 	}
-	b, e := hkdf.Key(sha256.New, secret, []byte("snitzel-cloud/v1"), purpose, 32)
+	b, e := hkdf.Key(sha256.New, secret, []byte(protocol.CryptoContext), purpose, 32)
 	copy(key[:], b)
 	return key, e
 }
@@ -170,9 +170,9 @@ func Admit(ctx context.Context, c net.Conn, initiator bool, token []byte, hello 
 	}
 	// Empty admission tokens explicitly select Noise NN, without relay authentication.
 	// The distinct prologue prevents interpreting protected handshakes as open ones.
-	cfg := noise.Config{CipherSuite: noise.NewCipherSuite(noise.DH25519, noise.CipherChaChaPoly, noise.HashSHA256), Pattern: noise.HandshakeNN, Initiator: initiator, Prologue: append([]byte("snitzel-cloud/v3/client-relay/"), raw...)}
+	cfg := noise.Config{CipherSuite: noise.NewCipherSuite(noise.DH25519, noise.CipherChaChaPoly, noise.HashSHA256), Pattern: noise.HandshakeNN, Initiator: initiator, Prologue: append([]byte(protocol.ClientRelayCryptoContext), raw...)}
 	if len(token) == 0 {
-		cfg.Prologue = append([]byte("snitzel-cloud/v3/client-relay/open/"), raw...)
+		cfg.Prologue = append([]byte(protocol.OpenClientRelayCryptoContext), raw...)
 	} else {
 		key, e := Derive(token, "relay-admission")
 		if e != nil {

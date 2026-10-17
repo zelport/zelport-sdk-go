@@ -89,7 +89,7 @@ func peerWithOptions(ctx context.Context, c net.Conn, initiator bool, identity p
 		return nil, err
 	}
 	expectedKey, _ := protocol.DecodeKey(expected)
-	cfg := noise.Config{CipherSuite: noise.NewCipherSuite(noise.DH25519, noise.CipherChaChaPoly, noise.HashSHA256), Pattern: noise.HandshakeXX, Initiator: initiator, PresharedKey: key[:], PresharedKeyPlacement: 3, StaticKeypair: noise.DHKey{Private: identity.PrivateKey, Public: pub}, Prologue: append([]byte("snitzel-cloud/v3/consumer-provider/"), raw...)}
+	cfg := noise.Config{CipherSuite: noise.NewCipherSuite(noise.DH25519, noise.CipherChaChaPoly, noise.HashSHA256), Pattern: noise.HandshakeXX, Initiator: initiator, PresharedKey: key[:], PresharedKeyPlacement: 3, StaticKeypair: noise.DHKey{Private: identity.PrivateKey, Public: pub}, Prologue: append([]byte(protocol.ConsumerProviderCryptoContext), raw...)}
 	secure, err := handshake(c, cfg, 3, expectedKey)
 	if err != nil {
 		return nil, err

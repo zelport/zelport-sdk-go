@@ -28,9 +28,8 @@ type Record struct {
 	Services  []Service `json:"services"`
 }
 
-func (r Record) validate() error { return r.validateVersion(Version) }
-func (r Record) validateVersion(version int) error {
-	if r.Version != version || len(r.Group) != 64 || strings.Trim(r.Group, "0123456789abcdef") != "" || !ValidID(r.DeviceID) || r.Sequence == 0 || r.Port < 1 || r.Port > 65535 || len(r.Hostname) > 253 || r.Hostname == "" || len(r.Services) > MaxServices || r.ExpiresAt-r.IssuedAt != 60 {
+func (r Record) validate() error {
+	if r.Version != Version || len(r.Group) != 64 || strings.Trim(r.Group, "0123456789abcdef") != "" || !ValidID(r.DeviceID) || r.Sequence == 0 || r.Port < 1 || r.Port > 65535 || len(r.Hostname) > 253 || r.Hostname == "" || len(r.Services) > MaxServices || r.ExpiresAt-r.IssuedAt != 60 {
 		return errors.New("invalid catalog record")
 	}
 	if _, e := DecodeKey(r.PublicKey); e != nil {
@@ -61,8 +60,8 @@ func (r Record) validateVersion(version int) error {
 
 	return nil
 }
-func canonicalRecord(r Record, version int) ([]byte, error) {
-	if e := r.validateVersion(version); e != nil {
+func canonicalRecord(r Record) ([]byte, error) {
+	if e := r.validate(); e != nil {
 		return nil, e
 	}
 	r.Services = append([]Service{}, r.Services...)
@@ -77,9 +76,9 @@ func canonicalRecord(r Record, version int) ([]byte, error) {
 	}
 	return b, nil
 }
-func CanonicalRecord(r Record) ([]byte, error) { return canonicalRecord(r, 3) }
+func CanonicalRecord(r Record) ([]byte, error) { return canonicalRecord(r) }
 func ParseCanonicalRecord(b []byte, now time.Time) (Record, error) {
-	r, e := parseRecordVersion(b, 3)
+	r, e := parseRecord(b)
 	if e != nil {
 		return r, e
 	}
@@ -134,7 +133,7 @@ func payload(encoded, key []byte) ([]byte, error) {
 	return b, nil
 }
 
-func parseRecordVersion(b []byte, version int) (Record, error) {
+func parseRecord(b []byte) (Record, error) {
 	var r Record
 	var pairs [][]string
 	e := Array(b, &r.Version, &r.Group, &r.DeviceID, &r.Hostname, &r.PublicKey, &r.Sequence, &r.IssuedAt, &r.ExpiresAt, &r.Port, &r.Publish, &pairs)
@@ -148,7 +147,7 @@ func parseRecordVersion(b []byte, version int) (Record, error) {
 		}
 		r.Services = append(r.Services, Service{ID: p[0], Domain: p[1], Kind: p[2]})
 	}
-	return r, r.validateVersion(version)
+	return r, r.validate()
 }
 func Digest(b []byte) string { v := sha256.Sum256(b); return hex.EncodeToString(v[:]) }
 func (r Record) Authority(service string) (string, error) {

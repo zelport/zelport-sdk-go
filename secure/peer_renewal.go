@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/flynn/noise"
+	"github.com/zelport/zelport-sdk-go/protocol"
 	"math"
 	"time"
 )
@@ -77,7 +78,7 @@ func (c *peerConn) newHandshakeLocked() error {
 		return errors.New("peer epoch exhausted")
 	}
 	cfg := c.cfg
-	prologue := append([]byte("snitzel-cloud/v3/renewal/"), c.cfg.Prologue...)
+	prologue := append([]byte(protocol.RenewalCryptoContext), c.cfg.Prologue...)
 	prologue = append(prologue, c.original...)
 	prologue = append(prologue, c.binding...)
 	prologue = append(prologue, epochBytes(c.epoch+1)...)

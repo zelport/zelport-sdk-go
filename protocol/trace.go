@@ -21,11 +21,11 @@ func AdvanceTrace(encoded string, groupToken []byte, device, service string, now
 	if len(groupToken) != 32 || !ValidID(device) || !ValidID(service) {
 		return "", errors.New("invalid trace context")
 	}
-	key, e := hkdf.Key(sha256.New, groupToken, []byte("snitzel-cloud/v1"), "trace-mac", 32)
+	key, e := hkdf.Key(sha256.New, groupToken, []byte(CryptoContext), "trace-mac", 32)
 	if e != nil {
 		return "", e
 	}
-	locator, _ := hkdf.Key(sha256.New, groupToken, []byte("snitzel-cloud/v1"), "group-locator", 32)
+	locator, _ := hkdf.Key(sha256.New, groupToken, []byte(CryptoContext), "group-locator", 32)
 	group := hex.EncodeToString(locator)
 	v := Trace{Group: group, Request: ID(), Visits: [][2]string{}}
 	if encoded != "" {
@@ -49,11 +49,11 @@ func AdvanceTrace(encoded string, groupToken []byte, device, service string, now
 		}
 	}
 	if len(v.Visits) >= 8 {
-		return "", errors.New("cloud hop limit exceeded")
+		return "", errors.New("relay hop limit exceeded")
 	}
 	for _, pair := range v.Visits {
 		if !ValidID(pair[0]) || !ValidID(pair[1]) || (pair[0] == device && pair[1] == service) {
-			return "", errors.New("cloud loop detected")
+			return "", errors.New("relay loop detected")
 		}
 	}
 	v.Visits = append(v.Visits, [2]string{device, service})

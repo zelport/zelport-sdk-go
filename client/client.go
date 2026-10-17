@@ -76,7 +76,7 @@ type control struct {
 func (c *control) close() { c.once.Do(func() { close(c.done); c.conn.Close() }) }
 func New(o Options) (*Client, error) {
 	if (len(o.AccessToken) != 0 && len(o.AccessToken) != 32) || len(o.GroupToken) != 32 || !protocol.ValidID(o.Identity.ID) || len(o.Identity.PrivateKey) != 32 || o.Registry == nil {
-		return nil, errors.New("invalid cloud client configuration")
+		return nil, errors.New("invalid relay client configuration")
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	locator, _ := secure.Derive(o.GroupToken, "group-locator")

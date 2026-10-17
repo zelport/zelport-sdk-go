@@ -16,7 +16,7 @@ type CatalogEnvelope struct {
 
 func ValidLocator(s string) bool { return len(s) == 64 && strings.Trim(s, "0123456789abcdef") == "" }
 func EncodeCatalogEnvelope(e CatalogEnvelope) ([]byte, error) {
-	if e.Version != 3 || !ValidLocator(e.Group) || !ValidLocator(e.RouteID) || len(e.Nonce) != 24 || len(e.Ciphertext) < 16 {
+	if e.Version != Version || !ValidLocator(e.Group) || !ValidLocator(e.RouteID) || len(e.Nonce) != 24 || len(e.Ciphertext) < 16 {
 		return nil, errors.New("invalid catalog envelope")
 	}
 	b, err := json.Marshal([]any{e.Version, e.Group, e.RouteID, base64.RawURLEncoding.EncodeToString(e.Nonce), base64.RawURLEncoding.EncodeToString(e.Ciphertext)})

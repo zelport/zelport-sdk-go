@@ -31,10 +31,10 @@ func Dial(ctx context.Context, address string, token []byte, purpose string) (ne
 // DialTLS accepts a supplied TLS configuration through the HTTP transport for controlled deployments/tests.
 func DialTLS(ctx context.Context, address string, token []byte, purpose string, client *http.Client) (net.Conn, error) {
 	u, e := url.Parse(address)
-	if e != nil || u.Host == "" || (u.Scheme != "ws" && u.Scheme != "wss") || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
+	if e != nil || u.Host == "" || (u.Scheme != "ws" && u.Scheme != "wss") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/" && u.Path != protocol.RelayEndpoint) {
 		return nil, errors.New("invalid relay URL")
 	}
-	u.Path = "/v3/ws"
+	u.Path = protocol.RelayEndpoint
 	if client == nil {
 		tr := http.DefaultTransport.(*http.Transport).Clone()
 		tr.Proxy = nil
