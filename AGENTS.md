@@ -45,7 +45,5 @@ internal hostnames, personal home-directory paths, private email addresses,
 credentials or user configuration. Check tracked files and staged diffs before
 publication, including generated source bundles.
 
-For this repository, use the GitHub account identifier `zdeneksvarc` as the Git
-author and committer name, and `79550344+zdeneksvarc@users.noreply.github.com`
-as the email address. Verify both identities before committing. Do not inherit
-a personal identity from global Git configuration.
+Preserve the existing repository-local Git author and committer configuration
+unless the user explicitly requests a change.
