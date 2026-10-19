@@ -1,7 +1,8 @@
 # zelport-sdk-go
 
 Shared Go SDK for end-to-end encrypted Zelport relay clients. The public API
-follows Go module compatibility rules for the current 0.x release line.
+follows Go module compatibility rules. Before v1, minor releases may contain
+breaking API changes as permitted for pre-v1 Go modules.
 
 - `protocol`: wire messages, records, identities and validation.
 - `secure`: Noise channels, authenticated catalog encryption and key derivation.
