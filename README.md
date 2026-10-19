@@ -11,13 +11,9 @@ breaking API changes as permitted for pre-v1 Go modules.
 
 The SDK has no dependency on Zelport Relay or Zelport App and contains no
 server-side management functionality.
-Preserve admission/E2E secret separation, identity pinning, durable watermarks,
-revocation, bounds and session lifecycle. This extraction is not a security audit.
 
-`make check` runs race tests and vet; `make build` compiles packages. Tests needing
-a real relay and private client state are preserved by the relay repository's
-integration harness, invoked by staging `make check-integration`.
-Tagged module versions can be downloaded directly by Go. See Zelport App's
+`make check` runs race tests and vet; `make build` compiles packages. Relay-backed
+tests run from the relay repository with `make check-integration`. See Zelport App's
 [protocol documentation](https://github.com/zelport/zelport/blob/main/docs/ports-over-relay-v1.md).
 
 Licensed under the [MIT License](LICENSE).
