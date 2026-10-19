@@ -47,3 +47,7 @@ publication, including generated source bundles.
 
 Preserve the existing repository-local Git author and committer configuration
 unless the user explicitly requests a change.
+
+Use canonical `vMAJOR.MINOR.PATCH` release identifiers in documentation,
+operator inputs, Go module versions, tags, GitHub Releases and reports. Do not
+present a prefix-free number as an SDK release identifier.
