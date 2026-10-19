@@ -16,4 +16,16 @@ server-side management functionality.
 tests run from the relay repository with `make check-integration`. See Zelport App's
 [protocol documentation](https://github.com/zelport/zelport/blob/main/docs/ports-over-relay-v1.md).
 
+## Release
+
+After pushing the verified tag, create its GitHub release with generated notes:
+
+```sh
+tag=vMAJOR.MINOR.PATCH
+gh release create "$tag" --repo zelport/zelport-sdk-go \
+  --verify-tag --generate-notes \
+  --title "Zelport SDK Go $tag" \
+  --notes "Relay protocol v1 SDK for Zelport App and Zelport Relay."
+```
+
 Licensed under the [MIT License](LICENSE).
